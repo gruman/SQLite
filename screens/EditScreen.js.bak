@@ -1,0 +1,128 @@
+import React, { Component, useState, useEffect } from 'react';
+import { Text, Button, ScrollView, ActivityIndicator, View, TextInput } from 'react-native';
+
+import Database from '../components/Database';
+
+function EditScreen({ navigation, route }) {
+
+	const db = new Database();
+
+	const navItemID = route.params;
+
+	const [isLoading, setIsLoading] = useState();
+
+	const [itemID, setItemID] = useState(navItemID);
+	const [itemName, setItemName] = useState();
+	const [itemDescription, setItemDescription] = useState();
+	const [itemPrice, setItemPrice] = useState();
+
+	function getItems() {
+		db.productById(itemID).then((data) => {
+			console.log(data);
+			const item = data;
+			setItemID(item.prodId);
+			setItemName(item.prodName);
+			setItemDescription(item.prodDesc);
+			setItemPrice(item.prodPrice);
+			setIsLoading(false);
+		}).catch((err) => {
+			console.log(err);
+			setIsLoading(false);
+		})
+	}
+
+	function updateTextInput(text, field) {
+		switch (field) {
+			case 'id':
+				setItemName(text);
+				break;
+			case 'name':
+				setItemName(text);
+				break;
+			case 'description':
+				setItemDescription(text);
+				break;
+			case 'price':
+				setItemPrice(text);
+				break;
+		}
+	}
+
+	function updateProduct() {
+		setIsLoading(true);
+		
+		let data = {
+			prodId: itemID,
+			prodName: itemName,
+			prodDesc: itemDescription,
+			prodPrice: itemPrice
+		}
+		db.updateProduct(data.prodId, data).then((result) => {
+			console.log(result);
+		setIsLoading(false);
+			navigation.goBack();
+		}).catch((err) => {
+			console.log(err);
+			setIsLoading(false);
+		})
+	}
+
+	return (
+		<ScrollView>
+		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+			<Text>Add Product</Text>
+			<Button
+				title="Go to Edit Product... again"
+				onPress={() => navigation.navigate('Edit')}
+			/>
+			<Button
+				title="Go to Home"
+				onPress={() => navigation.navigate('Home')}
+			/>
+			<Button
+				title="Go back"
+				onPress={() => navigation.goBack()}
+			/>
+		</View>
+
+		<View>
+        <TextInput
+            placeholder={'Product ID'}
+            value={itemID}
+            onChangeText={(text) => updateTextInput(text, 'id')}
+        />
+      </View>
+      <View>
+        <TextInput
+            placeholder={'Product Name'}
+            value={itemName}
+            onChangeText={(text) => updateTextInput(text, 'name')}
+        />
+      </View>
+      <View>
+        <TextInput
+            multiline={true}
+            numberOfLines={4}
+            placeholder={'Product Description'}
+            value={itemDescription}
+            onChangeText={(text) => updateTextInput(text, 'description')}
+        />
+      </View>
+      <View>
+        <TextInput
+            placeholder={'Product Price'}
+            value={itemPrice}
+            keyboardType='numeric'
+            onChangeText={(text) => updateTextInput(text, 'price')}
+        />
+      </View>
+      <View>
+        <Button
+          title='Save'
+          onPress={() => updateProduct()} />
+      </View>
+    </ScrollView>
+	);
+}
+
+export default EditScreen;
