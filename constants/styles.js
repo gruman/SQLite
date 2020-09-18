@@ -9,9 +9,10 @@ export const styles = StyleSheet.create({
       backgroundColor: '#fff'
     },
     header: {
-        fontSize: 36,
+        fontSize: 30,
         fontWeight: '700',
-        marginBottom: 18
+        marginBottom: 18,
+        textTransform: 'uppercase'
     },
     padding20: {
         padding: 20

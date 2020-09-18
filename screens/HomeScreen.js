@@ -19,6 +19,7 @@ function HomeScreen({ navigation, route }) {
 	function getItems() {
 		let itemsToList = [];
 		db.getItems(order).then((data) => {
+			console.log(data)
 			itemsToList = data;
 			setItems(itemsToList);
 			setIsLoading(false);
